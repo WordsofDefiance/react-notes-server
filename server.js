@@ -5,6 +5,9 @@ const path = require("path")
 const Database = require('better-sqlite3')
 const db = new Database('notes.db', {verbose: console.log});
 
+// parse request bodies with JSON
+app.use(express.json())
+
 // add an index route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
@@ -26,10 +29,15 @@ app.get('/api/all_notes', (req, res) => {
 
 app.get('/api/single_note/:id', (req, res) => {
     const single_note = db.prepare(
-        "SELECT * FROM NOTES WHERE ID = ?").get(req.params.id)
+        "SELECT * FROM NOTES WHERE id = ?"
+    ).get(req.params.id)
     res.status(200).send(single_note)
 })
 
-//Handle database connections
-//const row = db.prepare("SELECT * FROM notes where id = ?").get(1);
-//console.log(row)
+app.post('/api/add_note', (req, res) => {
+    console.log(req.body)
+    const note = db.prepare(
+        "INSERT INTO notes (title, body) VALUES (?, ?)"
+    ).run(req.body.title, req.body.body)
+    res.status(200).send(note)
+})
