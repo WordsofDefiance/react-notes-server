@@ -53,3 +53,21 @@ app.post('/api/update_note/', (req, res) => {
     ).run(req.body.title, req.body.body, req.body.id)
     res.status(200).send(updated_note)
 })
+
+// Get the counter value
+app.get('/api/get_counter', (req, res) => {
+    console.log('/api/get_counter')
+    const value = db.prepare(
+        "SELECT * FROM counter"
+    ).all()
+    res.status(200).send(value)
+})
+
+// Set the counter value
+app.put('/api/set_counter', (req, res) => {
+    console.log('/api/set_counter')
+    console.log(req)
+    const updated_value = db.prepare(
+        "UPDATE counter SET value = ?"
+    ).run(req.body.value)
+})
